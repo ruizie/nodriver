@@ -394,6 +394,9 @@ class Browser:
             "starting\n\texecutable :%s\n\narguments:\n%s", exe, "\n\t".join(params)
         )
         if not connect_existing:
+            my_env = os.environ.copy()
+            my_env["TEMP"] = self.config.user_data_dir
+            my_env["TMP"] = self.config.user_data_dir
             self._process: asyncio.subprocess.Process = (
                 await asyncio.create_subprocess_exec(
                     # self.config.browser_executable_path,
@@ -404,6 +407,7 @@ class Browser:
                     stdout=asyncio.subprocess.PIPE,
                     stderr=asyncio.subprocess.PIPE,
                     close_fds=is_posix,
+                    env=my_env,
                 )
             )
             self._process_pid = self._process.pid
